@@ -2,7 +2,7 @@ import axios from 'axios';
 import { loginreq, req } from './axiosFun';
 
 // 登录接口 
-export const login = (params) => { return loginreq("post", "/api/login", params) };
+export const login = (params) => { return loginreq("post", "/gl_server/admin/login", params) };
 // 获取用户菜单
 export const menu = (params) => { return axios.get("/api/menu?&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
 // 退出接口
@@ -63,14 +63,14 @@ export const RoleRightTree = (params) => { return axios.get("/api/RoleRight/tree
 export const RoleRightSave = (params) => { return req("post", "/api/RoleRight/save", params) };
 
 /**
- * 公司管理 
+ * 产品
  **/
-// 公司管理-获取公司列表
-export const deptList = (params) => { return req("post", "/api/Dept/list", params) };
-// 公司管理-保存（添加编辑）
-export const deptSave = (params) => { return req("post", "/api/Dept/save", params) };
-// 公司管理-删除公司
-export const deptDelete = (params) => { return axios.get("/api/Dept/delete?ids=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
+// 产品管理-获取列表
+export const deptList = (params) => { return req("post", "/gl_server/offer/offerList", params) };
+// 产品管理-保存（添加编辑）
+export const deptSave = (params) => { return req("post", "/gl_server/offer/addOffer", params) };
+// 产品管理-删除
+export const deptDelete = (params) => { return req("post","/gl_server/offer/del",{offerInfoId:params})};
 
 /**
  * 系统环境变量 

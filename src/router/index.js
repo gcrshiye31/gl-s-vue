@@ -10,6 +10,10 @@ import index from '@/views/index';
  */
 // 商品管理
 import Goods from '@/views/goods/Goods';
+// 实体卡管理
+import Card from '@/views/card/Card';
+// 商户管理
+import Merchant from '@/views/merchant/Merchant';
 // 机器信息管理
 import Machine from '@/views/machine/Machine';
 // 货道信息管理
@@ -83,7 +87,21 @@ export default new Router({
             meta: {
                 requireAuth: true
             }
-        }, {
+        },{
+          path: '/card/Card',
+          name: '实体卡管理',
+          component: Card ,
+          meta: {
+            requireAuth: true
+          }
+        },{
+          path: '/merchant/Merchant',
+          name: '商户管理',
+          component: Merchant,
+          meta: {
+            requireAuth: true
+          }
+        },{
             path: '/machine/Machine',
             name: '机器信息管理',
             component: Machine,

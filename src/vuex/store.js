@@ -5,7 +5,7 @@ Vue.use(Vuex);
 // 登录验证
 export default new Vuex.Store({
     state: {
-        user: false
+        user: ''
     },
     mutations: {
         // 登录

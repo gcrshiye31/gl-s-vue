@@ -50,6 +50,22 @@ export default {
               hasThird: 'N',
               url: 'goods/Goods',
               menus: null
+            },
+            {
+              menuid: 3,
+              icon: 'icon-cms-manage',
+              menuname: '实体卡管理',
+              hasThird: 'N',
+              url: 'card/Card',
+              menus: null
+            },
+            {
+              menuid: 4,
+              icon: 'icon-cs-manage',
+              menuname: '商户管理',
+              hasThird: 'N',
+              url: 'merchant/Merchant',
+              menus: null
             }
           ]
         },
