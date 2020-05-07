@@ -51,8 +51,26 @@ const req = (method, url, params) => {
         ]
     }).then(res => res.data);
 };
+// 通用公用方法
+const reqJson = (method, url, params) => {
+    return axios({
+        method: method,
+        url: url,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: params,
+        traditional: true,
+        transformRequest: [
+            function(data) {
+              return JSON.stringify(data);
+            }
+        ]
+    }).then(res => res.data);
+};
 
 export {
     loginreq,
-    req
+    req,
+    reqJson
 }

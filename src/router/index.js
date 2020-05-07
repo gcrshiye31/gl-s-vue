@@ -14,6 +14,8 @@ import Goods from '@/views/goods/Goods';
 import Card from '@/views/card/Card';
 // 商户管理
 import Merchant from '@/views/merchant/Merchant';
+
+import oilStationList from '@/views/oilStation/oilStationList'
 // 机器信息管理
 import Machine from '@/views/machine/Machine';
 // 货道信息管理
@@ -23,6 +25,7 @@ import MachineAisle from '@/views/machine/MachineAisle';
  */
 // 交易订单
 import Order from '@/views/pay/Order';
+import oilOrder from '@/views/oil/Order';
 /**
  * 系统管理
  */
@@ -102,6 +105,13 @@ export default new Router({
             requireAuth: true
           }
         },{
+          path: '/iolStation/iolStationList',
+          name: '油站管理',
+          component: oilStationList,
+          meta: {
+            requireAuth: true
+          }
+        },{
             path: '/machine/Machine',
             name: '机器信息管理',
             component: Machine,
@@ -117,11 +127,18 @@ export default new Router({
             }
         }, {
             path: '/pay/Order',
-            name: '交易订单',
+            name: '充值订单',
             component: Order,
             meta: {
                 requireAuth: true
             }
+        },{
+          path: '/oil/Order',
+          name: '加油订单',
+          component: oilOrder,
+          meta: {
+            requireAuth: true
+          }
         }, {
             path: '/system/user',
             name: '用户管理',

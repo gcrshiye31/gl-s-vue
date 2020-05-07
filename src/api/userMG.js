@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { loginreq, req } from './axiosFun';
+import { loginreq, req,reqJson } from './axiosFun';
 
 // 登录接口 
 export const login = (params) => { return loginreq("post", "/gl_server/admin/login", params) };
@@ -61,7 +61,26 @@ export const roleDelete = (params) => { return axios.delete("/api/Role/delete?id
 export const RoleRightTree = (params) => { return axios.get("/api/RoleRight/tree/" + params + "?token=" + localStorage.getItem('logintoken')) };
 // 角色管理-菜单权限（保存）
 export const RoleRightSave = (params) => { return req("post", "/api/RoleRight/save", params) };
-
+/**
+ * 实体卡
+ **/
+// 实体卡管理-获取列表
+export const cardList = (params) => { return req("post", "/gl_server/card/cardList", params) };
+//加油站列表
+export const qryGasList = (params) => { return req("post", "/gl_server/gas/qryGasList", params) };
+//充值订单信息
+export const qryChargeOrder = (params) => { return req("post", "/gl_server/order/qryChargeOrder", params) };
+//查询加油订单
+export const qryOilOrder = (params) => { return req("post", "/gl_server/order/qryoilOrder", params) };
+//可用卡列表
+export const activeCardList = (params) => { return req("post", "/gl_server/card/activeCardList", params) };
+//可用卡列表
+export const qryUserInfo = (params) => { return req("post", "/gl_server/user/query", params) };
+// 实体卡管理-保存（添加编辑）
+export const cardSave = (params) => { return req("post", "/gl_server/card/addCard", params) };
+// 实体卡管理-删除
+export const cardDelete = (params) => { return req("post","/gl_server/card/del",{cardId:params})};
+export const sendCard = (params) => { return reqJson("post","/gl_server/card/sendCard",params)};
 /**
  * 产品
  **/
@@ -71,6 +90,15 @@ export const deptList = (params) => { return req("post", "/gl_server/offer/offer
 export const deptSave = (params) => { return req("post", "/gl_server/offer/addOffer", params) };
 // 产品管理-删除
 export const deptDelete = (params) => { return req("post","/gl_server/offer/del",{offerInfoId:params})};
+/**
+ * 商户
+ **/
+// 商户管理-获取列表
+export const merchantList = (params) => { return req("post", "/gl_server/merchant/merchantList", params)};
+// 商户管理-保存（添加编辑）
+export const merchantSave = (params) => { return req("post", "/gl_server/merchant/addMerchant", params)};
+//商户管理-删除
+export const merchantDel = (params) => { return req("post","/gl_server/merchant/del",{merchantId:params})};
 
 /**
  * 系统环境变量 

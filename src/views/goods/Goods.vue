@@ -38,16 +38,16 @@
     <!-- 编辑界面 -->
     <el-dialog :title="title" :visible.sync="editFormVisible" width="30%" @click="closeDialog">
       <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="产品名称" prop="deptName">
+        <el-form-item label="产品名称" prop="offerName">
           <el-input size="small" v-model="editForm.offerName" auto-complete="off" placeholder="请输入产品名称"></el-input>
         </el-form-item>
-        <el-form-item label="售卖价格" prop="deptNo">
+        <el-form-item label="售卖价格" prop="saleFee">
           <el-input size="small" v-model="editForm.saleFee" auto-complete="off" placeholder="请输入零售价（元）"></el-input>
         </el-form-item>
-        <el-form-item label="加油金" prop="deptName">
+        <el-form-item label="加油金" prop="realFee">
           <el-input size="small" v-model="editForm.realFee" auto-complete="off" placeholder="请输入加油金（元）"></el-input>
         </el-form-item>
-        <el-form-item label="加油时长" prop="deptNo">
+        <el-form-item label="加油时长" prop="periodNum">
           <el-input size="small" v-model="editForm.periodNum" auto-complete="off" placeholder="请输入加油时长（天）"></el-input>
         </el-form-item>
       </el-form>
@@ -87,8 +87,8 @@ export default {
         realFee: [{ required: true, message: '请输入加油金', trigger: 'blur' }]
       },
       formInline: {
-        page: 1,
-        limit: 10,
+        pageIndex: 0,
+        pageSize: 10,
         varLable: '',
         varName: ''
       },
@@ -142,22 +142,23 @@ export default {
               message: res.errMsg
             });
           } else {
-            this.listData = res.resultJson;
+            console.log(res);
+            this.listData = res.resultJson.list;
             // 分页赋值
-            this.pageparm.currentPage = this.formInline.page
-            this.pageparm.pageSize = this.formInline.limit
-            this.pageparm.total = res.resultJson.size
+            this.pageparm.currentPage = res.resultJson.pageNum
+            this.pageparm.pageSize = res.resultJson.pageSize
+            this.pageparm.total = res.resultJson.total
           }
         })
         .catch(err => {
           this.loading = false
-          this.$message.error('菜单加载失败，请稍后再试！')
+          this.$message.error('产品加载失败，请稍后再试！')
         })
     },
     // 分页插件事件
     callFather(parm) {
-      this.formInline.page = parm.currentPage
-      this.formInline.limit = parm.pageSize
+      this.formInline.pageIndex = parm.currentPage
+      this.formInline.pageSize = parm.pageSize
       this.getdata(this.formInline)
     },
     // 搜索事件
@@ -176,6 +177,7 @@ export default {
         this.editForm.saleFee = row.saleFee
       } else {
         this.title = '添加'
+        this.editForm.offerId = ''
         this.editForm.offerName = ''
         this.editForm.periodNum = ''
         this.editForm.realFee = ''
@@ -194,7 +196,7 @@ export default {
                 this.getdata(this.formInline)
                 this.$message({
                   type: 'success',
-                  message: '公司保存成功！'
+                  message: '产品保存成功！'
                 })
               } else {
                 this.$message({
