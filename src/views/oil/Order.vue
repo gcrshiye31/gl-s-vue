@@ -28,15 +28,17 @@
       </el-table-column>
       <el-table-column sortable prop="phone" label="用户名" width="150">
       </el-table-column>
-      <el-table-column sortable prop="gasname" label="加油站" width="150">
+      <el-table-column sortable prop="gasname" label="加油站" width="180">
       </el-table-column>
       <el-table-column sortable prop="paytype" label="支付方式" width="150">
       </el-table-column>
-      <el-table-column sortable prop="orderstatusname" label="支付状态"  width="150">
+      <el-table-column sortable prop="orderstatusname" label="支付状态"  width="70">
       </el-table-column>
-      <el-table-column sortable prop="amountdiscounts" label="减免金额" width="250"  >
+      <el-table-column sortable prop="amountdiscounts" label="减免金额" width="100"  >
       </el-table-column>
-      <el-table-column sortable prop="amountpay" label="实付金额" width="150" >
+      <el-table-column sortable prop="amountpay" label="实付金额" width="100" >
+      </el-table-column>
+      <el-table-column sortable prop="ordertime" label="下单时间" width="150" :formatter="dateFormat">
       </el-table-column>
     </el-table>
     <!-- 分页组件 -->
@@ -125,8 +127,9 @@
       payTypeFormat(row){
         return row.payStatus=='0'?'待支付':'已支付';
       },
-      dayFormat(row){
-        return row.rsrvStr1+'天';
+      dateFormat(row){
+        let time=new Date(parseInt(row.ordertime));
+        return time.toLocaleString();
       },
       moneyFormat(row){
         return parseInt(row.rsrvStr2)/100+'元';

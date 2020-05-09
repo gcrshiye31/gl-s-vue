@@ -10,8 +10,31 @@
     </el-breadcrumb>
     <!-- 搜索筛选 -->
     <el-form :inline="true" :model="formInline" class="user-search">
+      <el-form-item label="搜索：">
+        <el-select size="small" v-model="formInline.active" placeholder="请选择" @change="search">
+          <el-option label="未使用" value="0"></el-option>
+          <el-option label="已使用" value="1"></el-option>
+          <el-option label="已停用" value="2"></el-option>
+        </el-select>
+        <el-select size="small" v-model="formInline.merchant" placeholder="请选择" @change="search">
+          <el-option label="全部" value=""></el-option>
+          <el-option v-for="item in listDataMerchant" v-bind:key="item.id" :label="item.merchantName" :value="item.merchantId"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+      </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="small" type="primary" icon="el-icon-edit" @click="stopAll">批量暂停</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="small" type="primary" icon="el-icon-edit" @click="startAll">批量启用</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="small" type="primary" icon="el-icon-edit" @click="exportCard">导出卡</el-button>
       </el-form-item>
     </el-form>
     <!--列表-->
@@ -22,13 +45,15 @@
       </el-table-column>
       <el-table-column sortable prop="cardPassword" label="卡密" width="150">
       </el-table-column>
-      <el-table-column sortable prop="saleFee" label="售卖价格(元)" width="150">
+      <el-table-column sortable prop="saleFee" label="售卖价格(元)" width="100">
       </el-table-column>
-      <el-table-column sortable prop="realFee" label="加油金(元)" width="150">
+      <el-table-column sortable prop="realFee" label="加油金(元)" width="100">
       </el-table-column>
       <el-table-column sortable prop="periodNum" label="加油时长(天)" width="150">
       </el-table-column>
       <el-table-column sortable prop="merchantName" label="所属商户" width="150">
+      </el-table-column>
+      <el-table-column sortable prop="endTime" label="开卡时间" width="200" :formatter="dateFormat">
       </el-table-column>
       <el-table-column align="center" label="操作" min-width="200">
         <template slot-scope="scope">
@@ -93,7 +118,7 @@
   import {cardList} from "../../api/userMG";
   import {cardSave} from "../../api/userMG";
   import {cardDelete} from "../../api/userMG";
-  import {merchantList} from "../../api/userMG";
+  import {merchantList,cardUpdate,cardExport} from "../../api/userMG";
   export default {
     data() {
       return {
@@ -117,9 +142,6 @@
         },
         // rules表单验证
         rules: {
-          cardPassword: [
-            { required: true, message: '请输入卡密', trigger: 'blur' }
-          ],
           periodNum: [{ required: true, message: '请输入加油时长', trigger: 'blur' }],
           saleFee: [{ required: true, message: '请输入零售价', trigger: 'blur' }],
           realFee: [{ required: true, message: '请输入加油金', trigger: 'blur' }]
@@ -127,8 +149,9 @@
         formInline: {
           pageIndex: 0,
           pageSize: 10,
-          varLable: '',
-          varName: ''
+          merchant: '',
+          active: '0',
+
         },
         // 删除部门
         seletedata: {
@@ -157,13 +180,18 @@
      * 创建完毕
      */
     created() {
-      this.getdata(this.formInline)
+      this.getdata(this.formInline);
+      this.getMerchantList();
     },
 
     /**
      * 里面的方法只有被调用才会执行
      */
     methods: {
+      dateFormat(row){
+        let time=new Date(parseInt(row.endTime));
+        return time.toLocaleString();
+      },
       // 获取公司列表
       getdata(parameter) {
         this.loading = true
@@ -231,6 +259,84 @@
           this.editForm.merchantName = ''
           this.editForm.size=1;
         }
+      },
+      startAll(){
+        if(this.formInline.active!='2'){
+          this.$message.error('只能对暂停的卡进行批量启用，请选择已暂停的卡')
+          return;
+        }
+        if(this.listData.length==0){
+          this.$message.error('没有符合条件的卡');
+          return;
+        }
+        this.updateCardInfo(0)
+      },
+      stopAll(){
+        if(this.formInline.active!='0'){
+          this.$message.error('只能对未使用的卡进行批量启用，请选择未使用的卡');
+          return;
+        }
+        if(this.listData.length==0){
+          this.$message.error('没有符合条件的卡');
+          return;
+        }
+        this.updateCardInfo(2)
+      },
+      exportCard(){
+        cardExport({
+          active:this.formInline.active,
+          merchant:this.formInline.merchant
+        })
+          .then(res => {
+            this.editFormVisible = false
+            this.loading = false
+            if (res.msgFlag=='0') {
+              this.getdata(this.formInline)
+              this.$message({
+                type: 'success',
+                message: '卡修改成功！'
+              })
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.errMsg
+              })
+            }
+          })
+          .catch(err => {
+            this.editFormVisible = false
+            this.loading = false
+            this.$message.error('保存失败，请稍后再试！')
+          })
+      },
+      updateCardInfo(targetActive){
+        cardUpdate({
+          active:this.formInline.active,
+          merchant:this.formInline.merchant,
+          targetActive:targetActive
+        })
+          .then(res => {
+            this.editFormVisible = false
+            this.loading = false
+            if (res.msgFlag=='0') {
+              this.getdata(this.formInline)
+              this.$message({
+                type: 'success',
+                message: '卡修改成功！'
+              })
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.errMsg
+              })
+            }
+          })
+          .catch(err => {
+            this.editFormVisible = false
+            this.loading = false
+            this.$message.error('保存失败，请稍后再试！')
+          })
+
       },
       getMerchant(){
           this.getMerchantVisible=true;

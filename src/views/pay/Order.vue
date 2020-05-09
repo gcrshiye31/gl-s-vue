@@ -36,9 +36,11 @@
       </el-table-column>
       <el-table-column sortable prop="payStatus" label="支付状态" :formatter="payTypeFormat" width="150">
       </el-table-column>
-      <el-table-column sortable prop="rsrvStr2" label="加油金" width="250" :formatter="moneyFormat" >
+      <el-table-column sortable prop="rsrvStr2" label="加油金" width="120" :formatter="moneyFormat" >
       </el-table-column>
-      <el-table-column sortable prop="orderFee" label="实付金额" width="150" :formatter="payFormat" >
+      <el-table-column sortable prop="orderFee" label="实付金额" width="120" :formatter="payFormat" >
+      </el-table-column>
+      <el-table-column sortable prop="acceptTime" label="下单时间" width="180" :formatter="dateFormat" >
       </el-table-column>
     </el-table>
     <!-- 分页组件 -->
@@ -136,6 +138,10 @@
       },
       payFormat(row){
         return parseInt(row.orderFee)/100+'元';
+      },
+      dateFormat(row){
+        let time=new Date(parseInt(row.acceptTime));
+        return time.toLocaleString();
       },
       // 搜索事件
       search() {
