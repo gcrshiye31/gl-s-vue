@@ -287,27 +287,6 @@
           active:this.formInline.active,
           merchant:this.formInline.merchant
         })
-          .then(res => {
-            this.editFormVisible = false
-            this.loading = false
-            if (res.msgFlag=='0') {
-              this.getdata(this.formInline)
-              this.$message({
-                type: 'success',
-                message: '卡修改成功！'
-              })
-            } else {
-              this.$message({
-                type: 'info',
-                message: res.errMsg
-              })
-            }
-          })
-          .catch(err => {
-            this.editFormVisible = false
-            this.loading = false
-            this.$message.error('保存失败，请稍后再试！')
-          })
       },
       updateCardInfo(targetActive){
         cardUpdate({
