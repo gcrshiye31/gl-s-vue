@@ -67,6 +67,7 @@ export const RoleRightSave = (params) => { return req("post", "/api/RoleRight/sa
 // 实体卡管理-获取列表
 export const cardList = (params) => { return req("post", "/gl_server/card/cardList", params) };
 export const cardUpdate = (params) => { return req("post", "/gl_server/card/updataCardInfo", params) };
+export const cardSend = (params) => { return req("post", "/gl_server/card/changeCardMerchant", params) };
 // export const cardExport = (params) => { return req("post", "/gl_server/card/exportCard", params) };
 export const cardExport = (params) => {
   window.open('/gl_server/card/exportCard?active='+params.active+"&&merchant="+params.merchant);

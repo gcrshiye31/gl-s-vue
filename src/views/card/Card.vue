@@ -10,16 +10,22 @@
     </el-breadcrumb>
     <!-- 搜索筛选 -->
     <el-form :inline="true" :model="formInline" class="user-search">
-      <el-form-item label="搜索：">
-        <el-select size="small" v-model="formInline.active" placeholder="请选择" @change="search">
+      <el-form-item>
+        <el-select size="small" style="width:120px"v-model="formInline.active" placeholder="请选择" @change="search">
           <el-option label="未使用" value="0"></el-option>
           <el-option label="已使用" value="1"></el-option>
           <el-option label="已停用" value="2"></el-option>
         </el-select>
-        <el-select size="small" v-model="formInline.merchant" placeholder="请选择" @change="search">
+        <el-select size="small" v-model="formInline.merchant" placeholder="请选择" @change="search" style="width:120px">
           <el-option label="全部" value=""></el-option>
           <el-option v-for="item in listDataMerchant" v-bind:key="item.id" :label="item.merchantName" :value="item.merchantId"></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item >
+        <el-input size="small" v-model="formInline.startCardId" placeholder="起始卡号" style="width:120px" @change="search"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input size="small" v-model="formInline.endCardId" placeholder="结束卡号" style="width:120px" @change="search"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
@@ -31,10 +37,13 @@
         <el-button size="small" type="primary" icon="el-icon-edit" @click="stopAll">批量暂停</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button size="small" type="primary" icon="el-icon-edit" @click="startAll">批量启用</el-button>
+        <el-button size="small" type="primary" icon="el-icon-edit-outline" @click="startAll">批量启用</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button size="small" type="primary" icon="el-icon-edit" @click="exportCard">导出卡</el-button>
+        <el-button size="small" type="primary" icon="el-icon-printer" @click="exportCard">导出卡</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="small" type="primary" icon="el-icon-sold-out" @click="sendCard">批量发卡</el-button>
       </el-form-item>
     </el-form>
     <!--列表-->
@@ -118,7 +127,7 @@
   import {cardList} from "../../api/userMG";
   import {cardSave} from "../../api/userMG";
   import {cardDelete} from "../../api/userMG";
-  import {merchantList,cardUpdate,cardExport} from "../../api/userMG";
+  import {merchantList,cardUpdate,cardExport,cardSend} from "../../api/userMG";
   export default {
     data() {
       return {
@@ -129,6 +138,7 @@
         getMerchantVisible: false, //控制编辑页面显示与隐藏
         title: '添加',
         isAdd:true,
+        isSend:false,
         editForm: {
           cardId:'',
           cardNum: '',
@@ -151,6 +161,9 @@
           pageSize: 10,
           merchant: '',
           active: '0',
+          startCardId:'',
+          endCardId:'',
+          targeMerchant:''
 
         },
         // 删除部门
@@ -285,14 +298,18 @@
       exportCard(){
         cardExport({
           active:this.formInline.active,
-          merchant:this.formInline.merchant
+          merchant:this.formInline.merchant,
+          startCardId:this.formInline.startCardId,
+          endCardId:this.formInline.endCardId
         })
       },
       updateCardInfo(targetActive){
         cardUpdate({
           active:this.formInline.active,
           merchant:this.formInline.merchant,
-          targetActive:targetActive
+          targetActive:targetActive,
+          startCardId:this.formInline.startCardId,
+          endCardId:this.formInline.endCardId
         })
           .then(res => {
             this.editFormVisible = false
@@ -317,14 +334,48 @@
           })
 
       },
-      getMerchant(){
+      sendCard(){
+        this.getMerchant(true);
+      },
+      getMerchant(isSend){
           this.getMerchantVisible=true;
+          if(isSend==true){
+            this.isSend=true;
+          }else{
+            this.isSend=false;
+          }
           this.getMerchantList()
       },
       doSelectMerchant(index,row){
         this.editForm.merchantId = row.merchantId;
         this.editForm.merchantName = row.merchantName;
         this.getMerchantVisible=false;
+        if(this.isSend==true){
+          this.formInline.targeMerchant=row.merchantId;
+          this.formInline.targeMerchantName=row.merchantName;
+          this.doSendCard();
+        }
+      },
+      doSendCard(){
+        cardSend(this.formInline).then(res => {
+          this.loading = false
+          if (res.msgFlag != "0") {
+            this.$message({
+              type: 'error',
+              message: res.errMsg
+            });
+          } else {
+            this.$message({
+              type: 'info',
+              message: '发卡成功'
+            });
+            this.search();
+          }
+        })
+          .catch(err => {
+            this.loading = false
+            this.$message.error('卡加载失败，请稍后再试！')
+          })
       },
       getMerchantList(){
         this.loading = true
