@@ -70,7 +70,7 @@ export const cardUpdate = (params) => { return req("post", "/gl_server/card/upda
 export const cardSend = (params) => { return req("post", "/gl_server/card/changeCardMerchant", params) };
 // export const cardExport = (params) => { return req("post", "/gl_server/card/exportCard", params) };
 export const cardExport = (params) => {
-  window.open('/gl_server/card/exportCard?active='+params.active+"&&merchant="+params.merchant);
+  window.open('/gl_server/card/exportCard?active='+params.active+"&&merchant="+params.merchant+"&&startCardId="+params.startCardId+"&&endCardId="+params.endCardId);
 };
 //加油站列表
 export const qryGasList = (params) => { return req("post", "/gl_server/gas/qryGasList", params) };

@@ -18,7 +18,11 @@
     <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
       <el-table-column align="center" type="selection" width="60">
       </el-table-column>
-      <el-table-column sortable prop="merchantName" label="商户名称" width="400">
+      <el-table-column sortable prop="merchantName" label="商户名称" width="200">
+      </el-table-column>
+      <el-table-column sortable prop="merchantUsername" label="商户账号" width="200">
+      </el-table-column>
+      <el-table-column sortable prop="merchantPassword" label="商户密码" width="200">
       </el-table-column>
       <el-table-column sortable prop="merchantActive" label="是否可用" width="200">
       </el-table-column>
@@ -37,6 +41,9 @@
     <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
       <el-form-item label="商户名称" prop="merchantName">
         <el-input size="small" v-model="editForm.merchantName" auto-complete="off" placeholder="请输入商户名称"></el-input>
+      </el-form-item>
+      <el-form-item label="商户密码" prop="merchantPassword">
+        <el-input size="small" v-model="editForm.merchantPassword" auto-complete="off" placeholder="请输入商户密码"></el-input>
       </el-form-item>
       <el-form-item label="是否可用" prop="merchantActive">
         <el-input size="small" v-model="editForm.merchantActive" auto-complete="off" placeholder="请选择商户是否可用"></el-input>
@@ -84,7 +91,8 @@
         editForm: {
           merchantId:'',
           merchantName: '',
-          merchantActive: ''
+          merchantActive: '',
+          merchantPassword:''
         },
         // rules表单验证
         rules: {
@@ -181,11 +189,13 @@
           this.editForm.merchantId = row.merchantId
           this.editForm.merchantName = row.merchantName
           this.editForm.merchantActive = row.merchantActive
+          this.editForm.merchantPassword = row.merchantPassword
         } else {
           this.title = '添加'
           this.editForm.merchantId = ''
           this.editForm.merchantName = ''
           this.editForm.merchantActive = '0'
+          this.editForm.merchantPassword = ''
         }
       },
       //发卡界面

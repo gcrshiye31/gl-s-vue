@@ -12,6 +12,7 @@ import index from '@/views/index';
 import Goods from '@/views/goods/Goods';
 // 实体卡管理
 import Card from '@/views/card/Card';
+import CardMerchant from '@/views/card/CardMerchant';
 // 商户管理
 import Merchant from '@/views/merchant/Merchant';
 
@@ -94,6 +95,13 @@ export default new Router({
           path: '/card/Card',
           name: '实体卡管理',
           component: Card ,
+          meta: {
+            requireAuth: true
+          }
+        },{
+          path: '/card/CardMerchant',
+          name: '实体卡管理',
+          component: CardMerchant ,
           meta: {
             requireAuth: true
           }

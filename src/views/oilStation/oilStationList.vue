@@ -9,43 +9,9 @@
       <el-breadcrumb-item>加油站信息</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 搜索筛选 -->
-    <!-- 搜索筛选 -->
     <el-form :inline="true" :model="formInline" class="user-search">
       <el-form-item label="搜索：">
-        <el-select size="small" v-model="formInline.provinceName" placeholder="请选择">
-          <el-option label="全部" value=""></el-option>
-          <el-option label="河南省" value="河南省"></el-option>
-          <el-option label="贵州省" value="贵州省"></el-option>
-          <el-option label="山西省" value="山西省"></el-option>
-          <el-option label="江苏省" value="江苏省"></el-option>
-          <el-option label="江西省" value="江西省"></el-option>
-          <el-option label="广东省" value="广东省"></el-option>
-          <el-option label="四川省" value="四川省"></el-option>
-          <el-option label="山东省" value="山东省"></el-option>
-          <el-option label="浙江省" value="浙江省"></el-option>
-          <el-option label="安徽省" value="安徽省"></el-option>
-          <el-option label="黑龙江省" value="黑龙江省"></el-option>
-          <el-option label="吉林省" value="吉林省"></el-option>
-          <el-option label="湖北省" value="湖北省"></el-option>
-          <el-option label="湖南省" value="湖南省"></el-option>
-          <el-option label="北京市" value="北京市"></el-option>
-          <el-option label="陕西省" value="陕西省"></el-option>
-          <el-option label="重庆市" value="重庆市"></el-option>
-          <el-option label="河北省" value="河北省"></el-option>
-          <el-option label="宁夏回族自治区" value="宁夏回族自治区"></el-option>
-          <el-option label="辽宁省" value="辽宁省"></el-option>
-          <el-option label="福建省" value="福建省"></el-option>
-          <el-option label="广西壮族自治区" value="广西壮族自治区"></el-option>
-          <el-option label="新疆维吾尔自治区" value="新疆维吾尔自治区"></el-option>
-          <el-option label="云南省" value="云南省"></el-option>
-          <el-option label="上海市" value="上海市"></el-option>
-          <el-option label="内蒙古自治区" value="内蒙古自治区"></el-option>
-          <el-option label="甘肃省" value="甘肃省"></el-option>
-          <el-option label="青海省" value="青海省"></el-option>
-          <el-option label="西藏自治区" value="西藏自治区"></el-option>
-          <el-option label="海南省" value="海南省"></el-option>
-          <el-option label="天津市" value="天津市"></el-option>
-        </el-select>
+        <v-distpicker :province="formInline.provinceName" :city="formInline.cityName" :area="formInline.area" @province="onChangeProvince" @city="onChangeCity" @area="onChangeArea"></v-distpicker>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
@@ -75,6 +41,7 @@
 
 <script>
   import Pagination from '../../components/Pagination'
+  import VDistpicker from 'v-distpicker'
   import {qryGasList} from "../../api/userMG";
   export default {
     data() {
@@ -85,7 +52,10 @@
         formInline: {
           pageIndex: 0,
           pageSize: 10,
-          provinceName: '',
+          provinceName: '广东省',
+          cityName:'广州市',
+          area:'白云区'
+
         },
         listData: [], //用户数据
         listDataMerchant:[],
@@ -99,7 +69,8 @@
     },
     // 注册组件
     components: {
-      Pagination
+      Pagination,
+      VDistpicker
     },
     /**
      * 数据发生改变
@@ -116,6 +87,27 @@
      * 里面的方法只有被调用才会执行
      */
     methods: {
+      onChangeProvince(province){
+          this.formInline.provinceName=province.value;
+          this.formInline.cityName='';
+          this.formInline.area='';
+          this.search();
+      },
+      onChangeCity(city){
+          if(!city.code||typeof city.code=='undefined'){
+            return;
+          }
+          this.formInline.cityName=city.value;
+          this.formInline.area='';
+          this.search();
+      },
+      onChangeArea(area){
+          if(!area.code||typeof area.code=='undefined'){
+            return;
+          }
+          this.formInline.area=area.value;
+          this.search();
+      },
       // 获取公司列表
       getdata(parameter) {
         this.loading = true

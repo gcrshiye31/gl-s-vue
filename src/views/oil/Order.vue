@@ -48,6 +48,7 @@
 
 <script>
   import Pagination from '../../components/Pagination'
+  import { mapState } from 'vuex'
   import {qryOilOrder} from "../../api/userMG";
   export default {
     data() {
@@ -81,16 +82,21 @@
     /**
      * 创建完毕
      */
-    created() {
+    mounted() {
       this.getdata(this.formInline)
     },
-
+    computed:{
+      ...mapState(['userName','merchantId','isMerchant'])
+    },
     /**
      * 里面的方法只有被调用才会执行
      */
     methods: {
       // 获取公司列表
       getdata(parameter) {
+        if(this.merchantId&&typeof this.merchantId!='undefined'){
+          parameter.merchantId=this.merchantId;
+        }
         this.loading = true
         // 模拟数据结束
 

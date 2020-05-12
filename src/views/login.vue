@@ -9,6 +9,7 @@
         <el-input type="password" v-model="ruleForm.password" auto-complete="off" placeholder="密码"></el-input>
       </el-form-item>
       <el-checkbox class="remember" v-model="rememberpwd">记住密码</el-checkbox>
+      <el-checkbox class="isMerchant" v-model="ruleForm.isMerchant">商户登录</el-checkbox>
       <el-form-item style="width:100%;">
         <el-button type="primary" style="width:100%;" @click="submitForm('ruleForm')" :loading="logining">登录</el-button>
       </el-form-item>
@@ -33,7 +34,8 @@ export default {
         password: '',
         code: '',
         randomStr: '',
-        codeimg: ''
+        codeimg: '',
+        isMerchant:false,
       },
       //rules前端验证
       rules: {
@@ -59,6 +61,7 @@ export default {
       if (getCookie('user') != '' && getCookie('pwd') != '') {
         this.ruleForm.username = getCookie('user')
         this.ruleForm.password = getCookie('pwd')
+        this.ruleForm.isMerchant = getCookie('isMerchant')
         this.rememberpwd = true
       }
     },
@@ -69,23 +72,24 @@ export default {
           this.logining = true
           // 注释
           login(this.ruleForm).then(res => {
-            console.log(res);
             if (res.msgFlag==0) {
               if (this.rememberpwd) {
                 //保存帐号到cookie，有效期7天
                 setCookie('user', this.ruleForm.userName, 7)
                 //保存密码到cookie，有效期7天
                 setCookie('pwd', this.ruleForm.password, 7)
+                setCookie('isMerchant', this.ruleForm.isMerchant, 7)
               } else {
                 delCookie('user')
                 delCookie('pwd')
+                delCookie('isMerchant')
               }
               //如果请求成功就让他2秒跳转路由
               setTimeout(() => {
                 this.logining = false
                 // 缓存用户个人信息
-                this.$store.commit('login', res.resultJson.realName)
-                this.$router.push({ path: '/goods/Goods' })
+                this.$store.commit('login', res.resultJson)
+                this.$router.push({ path: '/iolStation/iolStationList' })
               }, 1000)
             } else {
               this.$message.error(res.msg)
